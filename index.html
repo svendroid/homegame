@@ -8,18 +8,33 @@
     <script type="text/javascript" src="node_modules/phaser/dist/phaser.js"></script>
 
     <style>
+        html,
         body {
-            padding: 0px;
-            margin: 0px;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: white;
+        }
+
+        #game-container {
+            background: #0a0a0a;
+            height: 100%;
+            width: 100%;
         }
     </style>
 </head>
 
 <body>
+    <div id="game-container"></div>
     <script>
 
         var config = {
-            type: Phaser.WEBGL,
+            type: Phaser.CANVAS,
+            parent: 'game-container',
             width: 600,
             height: 600,
             backgroundColor: '#2d2d2d',
@@ -62,58 +77,45 @@
 
             map.setCollisionBetween(0, 2000, true, true, this.walls);
 
-            var startArea = findObjectsByType('playerStart', map, 'objects')
-            this.player = this.add.sprite(startArea[0].x, startArea[0].y, 'alex');
-            this.player.name = "player";
-
+            this.player = createPlayer(map, this);
             this.physics.world.enable(this.player);
             this.physics.add.collider(this.player, this.walls);
-            console.log(this.walls);
+
+            createLights(map, this);
 
             this.cameras.main.startFollow(this.player);
             this.cursors = this.input.keyboard.createCursorKeys();
 
-            var item = findObjectsByType('item', map, 'objects')[0];
-            console.log(item);
-            this.lamp = this.add.rectangle(item.x, item.y, 32, 32, '#f00');
-            this.lamp.name = "asdf";
-            console.log(this.lamp);
-            this.physics.world.enable(this.lamp);
-            this.physics.add.overlap(this.player, this.lamp, onCollide);
         }
 
         var handledCollide = true;
 
-        function onCollide(element, element2) {
+        function onPlayerOverlapsLight(player, light) {
             if (handledCollide) {
-                console.log(element.name);
-                console.log(element2.name);
+                console.log("TODO show control for: " + light.getData('name'));
                 handledCollide = false;
-                console.log("TODO display entity control!!!");
             }
-
         }
 
-        function findObjectsByType(type, map, layer) {
-            var result = new Array();
-            var objLayer = map.objects.find(objLayer => objLayer.name === layer);
-            objLayer.objects.forEach(function (element) {
-                if (element.properties.find(prop => prop.name === 'type' && prop.value === type)) {
-                    //Phaser uses top left, Tiled bottom left so we have to adjust the y position
-                    //also keep in mind that the cup images are a bit smaller than the tile which is 16x16
-                    //so they might not be placed in the exact pixel position as in Tiled
-                    element.y -= map.tileHeight;
-                    result.push(element);
-                }
-            });
-            return result;
+        function createLights(map, scene) {
+            const objects = map.getObjectLayer("lights").objects;
+            objects.forEach(obj => {
+                var light = scene.add.rectangle(
+                    obj.x + obj.width / 2,
+                    obj.y + obj.height / 2,
+                    obj.width,
+                    obj.height
+                );
+                light.setData('name', obj.name);
+                scene.physics.world.enable(light);
+                scene.physics.add.overlap(scene.player, light, onPlayerOverlapsLight);
+            })
         }
 
-        function createFromTiledObject(element, group) {
-            var sprite = group.create(element.x, element.y, element.properties.sprite);
-            Object.keys(element.properties).forEach(function (key) {
-                sprite[key] = element.properties[key];
-            });
+        function createPlayer(map, scene) {
+            const objects = map.getObjectLayer("player").objects;
+            var startArea = objects.find(obj => obj.name === 'startArea');
+            return scene.add.sprite(startArea.x + 16, startArea.y + 16, 'alex');
         }
 
         function update() {
@@ -134,12 +136,8 @@
                 this.player.body.velocity.x += 50;
             }
 
-            var touching = !this.player.body.blocked.none;
-            var wasTouching = !this.player.body.wasTouching.none;
-
-            console.log(this.player.body.embedded);
-
-            if(!this.player.body.embedded){
+            //body embedded works for static non moving objects, blocked and touching didn't work in this case
+            if (!this.player.body.embedded) {
                 handledCollide = true;
             }
         }

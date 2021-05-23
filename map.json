@@ -60,64 +60,73 @@
         {
          "draworder":"topdown",
          "id":3,
-         "name":"objects",
+         "name":"player",
          "objects":[
-                {
-                 "gid":5194,
-                 "height":32,
-                 "id":8,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"player"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":32,
-                 "x":61.8378378378378,
-                 "y":393.837837837838
-                }, 
-                {
-                 "height":70.8108108108108,
-                 "id":9,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"haid",
-                         "type":"string",
-                         "value":"lamp123"
-                        }, 
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"item"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":35.6756756756757,
-                 "x":221.621621621622,
-                 "y":301.081081081081
-                }, 
                 {
                  "height":41.0810810810811,
                  "id":10,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"type",
-                         "type":"string",
-                         "value":"playerStart"
-                        }],
+                 "name":"startArea",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":66.4864864864865,
-                 "x":123.783783783784,
-                 "y":360
+                 "width":52.1292819998601,
+                 "x":134.827787235035,
+                 "y":356.134598792062
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":7,
+         "name":"lights",
+         "objects":[
+                {
+                 "height":70.6816220880069,
+                 "id":11,
+                 "name":"light_right_sofa",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":34.2364106988783,
+                 "x":221.984469370147,
+                 "y":139.154443485764
+                }, 
+                {
+                 "height":65.7118205349439,
+                 "id":12,
+                 "name":"light_left_sofa",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":36.9974115616911,
+                 "x":61.846419327006,
+                 "y":141.915444348576
+                }, 
+                {
+                 "height":70.6816220880069,
+                 "id":13,
+                 "name":"light_blue",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":30.923209663503,
+                 "x":222.536669542709,
+                 "y":301.501294219154
+                }, 
+                {
+                 "height":39.7584124245039,
+                 "id":15,
+                 "name":"light_table",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32.0276100086281,
+                 "x":64.0552200172563,
+                 "y":272.786885245902
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -125,8 +134,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":7,
- "nextobjectid":11,
+ "nextlayerid":8,
+ "nextobjectid":16,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
