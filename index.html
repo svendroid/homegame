@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Home Assistant 2D Game</title>
+
+    <script type="text/javascript" src="node_modules/phaser/dist/phaser.js"></script>
+
+    <style>
+        body {
+            padding: 0px;
+            margin: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+
+        var config = {
+            type: Phaser.WEBGL,
+            width: 600,
+            height: 600,
+            backgroundColor: '#2d2d2d',
+            pixelArt: true,
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            },
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    debug: true
+                }
+            },
+        };
+
+        var game = new Phaser.Game(config);
+
+        function preload() {
+            this.load.image('tiles', 'assets/livingroom.png');
+            this.load.image('roombuilder', 'assets/roombuilder.png');
+            this.load.image('alex', 'assets/alex.png');
+            this.load.tilemapTiledJSON('map', 'map.json');
+        }
+
+        function create() {
+            var map = this.make.tilemap({ key: 'map' });
+
+            var tiles = map.addTilesetImage('livingroom', 'tiles');
+            var roombuilder = map.addTilesetImage('roombuilder', 'roombuilder');
+            var alex = map.addTilesetImage('alex', 'alex');
+
+            this.walls = map.createLayer('walls', roombuilder, 0, 0);
+            var floor = map.createLayer('floor', roombuilder, 0, 0);
+            var furniture = map.createLayer('furniture', tiles, 0, 0);
+            var furniture2 = map.createLayer('furniture2', tiles, 0, 0);
+
+            this.walls.debug = true;
+
+            map.setCollisionBetween(0, 2000, true, true, this.walls);
+
+            var startArea = findObjectsByType('playerStart', map, 'objects')
+            this.player = this.add.sprite(startArea[0].x, startArea[0].y, 'alex');
+            this.player.name = "player";
+
+            this.physics.world.enable(this.player);
+            this.physics.add.collider(this.player, this.walls);
+            console.log(this.walls);
+
+            this.cameras.main.startFollow(this.player);
+            this.cursors = this.input.keyboard.createCursorKeys();
+
+            var item = findObjectsByType('item', map, 'objects')[0];
+            console.log(item);
+            this.lamp = this.add.rectangle(item.x, item.y, 32, 32, '#f00');
+            this.lamp.name = "asdf";
+            console.log(this.lamp);
+            this.physics.world.enable(this.lamp);
+            this.physics.add.overlap(this.player, this.lamp, onCollide);
+        }
+
+        var handledCollide = true;
+
+        function onCollide(element, element2) {
+            if (handledCollide) {
+                console.log(element.name);
+                console.log(element2.name);
+                handledCollide = false;
+                console.log("TODO display entity control!!!");
+            }
+
+        }
+
+        function findObjectsByType(type, map, layer) {
+            var result = new Array();
+            var objLayer = map.objects.find(objLayer => objLayer.name === layer);
+            objLayer.objects.forEach(function (element) {
+                if (element.properties.find(prop => prop.name === 'type' && prop.value === type)) {
+                    //Phaser uses top left, Tiled bottom left so we have to adjust the y position
+                    //also keep in mind that the cup images are a bit smaller than the tile which is 16x16
+                    //so they might not be placed in the exact pixel position as in Tiled
+                    element.y -= map.tileHeight;
+                    result.push(element);
+                }
+            });
+            return result;
+        }
+
+        function createFromTiledObject(element, group) {
+            var sprite = group.create(element.x, element.y, element.properties.sprite);
+            Object.keys(element.properties).forEach(function (key) {
+                sprite[key] = element.properties[key];
+            });
+        }
+
+        function update() {
+            //player movement
+            this.player.body.velocity.y = 0;
+            this.player.body.velocity.x = 0;
+
+            if (this.cursors.up.isDown) {
+                this.player.body.velocity.y -= 50;
+            }
+            else if (this.cursors.down.isDown) {
+                this.player.body.velocity.y += 50;
+            }
+            if (this.cursors.left.isDown) {
+                this.player.body.velocity.x -= 50;
+            }
+            else if (this.cursors.right.isDown) {
+                this.player.body.velocity.x += 50;
+            }
+
+            var touching = !this.player.body.blocked.none;
+            var wasTouching = !this.player.body.wasTouching.none;
+
+            console.log(this.player.body.embedded);
+
+            if(!this.player.body.embedded){
+                handledCollide = true;
+            }
+        }
+    </script>
+</body>
+
+</html>
