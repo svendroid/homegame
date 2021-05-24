@@ -87,7 +87,7 @@
                 {
                  "height":70.6816220880069,
                  "id":11,
-                 "name":"light_right_sofa",
+                 "name":"light.esstischlampe",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -98,7 +98,7 @@
                 {
                  "height":65.7118205349439,
                  "id":12,
-                 "name":"light_left_sofa",
+                 "name":"light.regallampe",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -109,7 +109,7 @@
                 {
                  "height":70.6816220880069,
                  "id":13,
-                 "name":"light_blue",
+                 "name":"light.decke",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -120,7 +120,7 @@
                 {
                  "height":39.7584124245039,
                  "id":15,
-                 "name":"light_table",
+                 "name":"light.schreibtischlampe",
                  "rotation":0,
                  "type":"",
                  "visible":true,

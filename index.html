@@ -30,13 +30,19 @@
 
 <body>
     <div id="game-container"></div>
-    <script>
+    <script type="module">
+        import homeAssistantConfig from './config.js';
 
         var config = {
             type: Phaser.CANVAS,
-            parent: 'game-container',
-            width: 600,
-            height: 600,
+            scale: {
+                mode: Phaser.Scale.RESIZE,
+                parent: 'game-container',
+                autoCenter: Phaser.Scale.CENTER_BOTH,
+                width: 600,
+                height: 600
+            },
+
             backgroundColor: '#2d2d2d',
             pixelArt: true,
             scene: {
@@ -47,7 +53,7 @@
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: true
+                    debug: false
                 }
             },
         };
@@ -92,9 +98,27 @@
 
         function onPlayerOverlapsLight(player, light) {
             if (handledCollide) {
-                console.log("TODO show control for: " + light.getData('name'));
+                toggleLight(light.getData('name'));
                 handledCollide = false;
             }
+        }
+
+        function toggleLight(entity_id) {
+            fetch(homeAssistantConfig.home_assistant_url + "/api/services/light/toggle", {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + homeAssistantConfig.home_assistant_auth_bearer,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ "entity_id": entity_id })
+            })
+                .then(function (response) {
+                    return response.json();
+                }).then(function (data) {
+                    console.log(data);
+                }).catch(function (data) {
+                    console.error("Req failed " + data);
+                });
         }
 
         function createLights(map, scene) {
